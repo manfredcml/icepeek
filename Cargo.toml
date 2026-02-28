@@ -10,7 +10,7 @@ keywords = ["iceberg", "tui", "parquet", "data-lake", "terminal"]
 categories = ["command-line-utilities", "database"]
 repository = "https://github.com/manfredcml/icepeek"
 homepage = "https://github.com/manfredcml/icepeek"
-exclude = ["examples/docker-compose.yml"]
+exclude = ["examples/docker-compose.yml", "examples/Makefile"]
 
 [[bin]]
 name = "icepeek"
