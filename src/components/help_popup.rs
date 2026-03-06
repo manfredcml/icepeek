@@ -36,7 +36,10 @@ impl HelpPopup {
 
     fn keybindings() -> Vec<(&'static str, &'static str)> {
         vec![
-            ("1-5", "Switch tab (Data/Schema/Files/Props/Snap)"),
+            (
+                "1-6",
+                "Switch tab (Data/Schema/Files/Props/Stats/Snapshots)",
+            ),
             ("q", "Quit"),
             ("?", "Toggle this help"),
             ("Tab / Shift+Tab", "Cycle focus between panels"),
