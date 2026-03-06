@@ -593,7 +593,7 @@ mod tests {
         let bar = FileStatsPanel::render_bar(0.5, 10);
         assert!(!bar.is_empty());
         let full_blocks = bar.chars().filter(|&c| c == '█').count();
-        assert!(full_blocks >= 4 && full_blocks <= 5);
+        assert!((4..=5).contains(&full_blocks));
     }
 
     #[test]
