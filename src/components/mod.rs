@@ -1,5 +1,6 @@
 pub mod column_selector;
 pub mod data_view;
+pub mod file_stats_panel;
 pub mod filter_bar;
 pub mod help_popup;
 pub mod manifest_panel;

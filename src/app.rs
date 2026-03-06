@@ -14,6 +14,7 @@ use tokio::sync::mpsc;
 use crate::cli::{self, Cli, Command};
 use crate::components::column_selector::ColumnSelector;
 use crate::components::data_view::DataView;
+use crate::components::file_stats_panel::FileStatsPanel;
 use crate::components::filter_bar::FilterBar;
 use crate::components::help_popup::HelpPopup;
 use crate::components::manifest_panel::ManifestPanel;
@@ -43,6 +44,7 @@ struct App {
     schema_panel: SchemaPanel,
     snapshot_panel: SnapshotPanel,
     manifest_panel: ManifestPanel,
+    file_stats_panel: FileStatsPanel,
     properties_panel: PropertiesPanel,
     status_bar: StatusBar,
     help_popup: HelpPopup,
@@ -65,6 +67,7 @@ impl App {
             schema_panel: SchemaPanel::new(),
             snapshot_panel: SnapshotPanel::new(),
             manifest_panel: ManifestPanel::new(),
+            file_stats_panel: FileStatsPanel::new(),
             properties_panel: PropertiesPanel::new(),
             status_bar: StatusBar::new(),
             help_popup: HelpPopup::new(),
@@ -124,6 +127,7 @@ impl App {
             Tab::Snapshots => self.snapshot_panel.render(frame, layout.content, true),
             Tab::Files => self.manifest_panel.render(frame, layout.content, true),
             Tab::Properties => self.properties_panel.render(frame, layout.content, true),
+            Tab::Stats => self.file_stats_panel.render(frame, layout.content, true),
         }
 
         self.status_bar.render(frame, layout.status_bar, false);
@@ -154,6 +158,7 @@ impl App {
             KeyCode::Char('3') => return Some(Action::SwitchTab(2)),
             KeyCode::Char('4') => return Some(Action::SwitchTab(3)),
             KeyCode::Char('5') => return Some(Action::SwitchTab(4)),
+            KeyCode::Char('6') => return Some(Action::SwitchTab(5)),
             KeyCode::Char('r') => return Some(Action::Reload),
             KeyCode::Char('m') => return Some(Action::IncreaseLimit),
             KeyCode::Tab => return Some(Action::FocusNext),
@@ -167,6 +172,7 @@ impl App {
             Tab::Snapshots => self.snapshot_panel.handle_key(key),
             Tab::Files => self.manifest_panel.handle_key(key),
             Tab::Properties => self.properties_panel.handle_key(key),
+            Tab::Stats => self.file_stats_panel.handle_key(key),
         }
     }
 
@@ -184,7 +190,9 @@ impl App {
                 self.active_tab = tab;
                 self.focus = Focus::Left;
 
-                if tab == Tab::Files && self.manifest_panel.needs_load() {
+                let needs_manifest =
+                    self.manifest_panel.needs_load() || self.file_stats_panel.needs_load();
+                if (tab == Tab::Files || tab == Tab::Stats) && needs_manifest {
                     let msg_tx = msg_tx.clone();
                     let snap_id = self.selected_snapshot_id;
                     tokio::spawn(async move {
@@ -276,7 +284,8 @@ impl App {
                 self.schema_panel.set_viewed_schema(schema_id);
 
                 self.manifest_panel.invalidate();
-                if self.active_tab == Tab::Files {
+                self.file_stats_panel.invalidate();
+                if self.active_tab == Tab::Files || self.active_tab == Tab::Stats {
                     let msg_tx = msg_tx.clone();
                     let snap_id = self.selected_snapshot_id;
                     tokio::spawn(async move {
@@ -342,6 +351,7 @@ impl App {
         self.schema_panel.handle_message(msg);
         self.snapshot_panel.handle_message(msg);
         self.manifest_panel.handle_message(msg);
+        self.file_stats_panel.handle_message(msg);
         self.properties_panel.handle_message(msg);
         self.status_bar.handle_message(msg);
 
@@ -717,7 +727,7 @@ mod tests {
     #[test]
     fn handle_key_tab_switch() {
         let mut app = App::new(None, None, DEFAULT_PAGE_SIZE);
-        for (ch, idx) in [('1', 0), ('2', 1), ('3', 2), ('4', 3), ('5', 4)] {
+        for (ch, idx) in [('1', 0), ('2', 1), ('3', 2), ('4', 3), ('5', 4), ('6', 5)] {
             let key = KeyEvent::from(KeyCode::Char(ch));
             assert_eq!(app.handle_key(key), Some(Action::SwitchTab(idx)));
         }

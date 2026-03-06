@@ -9,15 +9,17 @@ pub enum Tab {
     Snapshots,
     Files,
     Properties,
+    Stats,
 }
 
 impl Tab {
-    pub const ALL: [Tab; 5] = [
+    pub const ALL: [Tab; 6] = [
         Tab::Data,
         Tab::Schema,
         Tab::Files,
         Tab::Properties,
         Tab::Snapshots,
+        Tab::Stats,
     ];
 
     pub fn label(&self) -> &'static str {
@@ -27,6 +29,7 @@ impl Tab {
             Tab::Files => "3:Files",
             Tab::Properties => "4:Props",
             Tab::Snapshots => "5:Snapshots",
+            Tab::Stats => "6:Stats",
         }
     }
 
@@ -65,5 +68,6 @@ mod tests {
     fn tab_labels() {
         assert_eq!(Tab::Data.label(), "1:Data");
         assert_eq!(Tab::Properties.label(), "4:Props");
+        assert_eq!(Tab::Stats.label(), "6:Stats");
     }
 }
