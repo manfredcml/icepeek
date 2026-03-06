@@ -18,8 +18,8 @@ impl Tab {
         Tab::Schema,
         Tab::Files,
         Tab::Properties,
-        Tab::Snapshots,
         Tab::Stats,
+        Tab::Snapshots,
     ];
 
     pub fn label(&self) -> &'static str {
@@ -28,8 +28,8 @@ impl Tab {
             Tab::Schema => "2:Schema",
             Tab::Files => "3:Files",
             Tab::Properties => "4:Props",
-            Tab::Snapshots => "5:Snapshots",
-            Tab::Stats => "6:Stats",
+            Tab::Stats => "5:Stats",
+            Tab::Snapshots => "6:Snapshots",
         }
     }
 
@@ -68,6 +68,7 @@ mod tests {
     fn tab_labels() {
         assert_eq!(Tab::Data.label(), "1:Data");
         assert_eq!(Tab::Properties.label(), "4:Props");
-        assert_eq!(Tab::Stats.label(), "6:Stats");
+        assert_eq!(Tab::Stats.label(), "5:Stats");
+        assert_eq!(Tab::Snapshots.label(), "6:Snapshots");
     }
 }
