@@ -175,7 +175,11 @@ mod tests {
     #[test]
     fn normalize_preserves_absolute_paths() {
         let result = normalize_local_path("/tmp");
-        assert_eq!(result, "/private/tmp"); // macOS canonicalizes /tmp → /private/tmp
+        let expected = std::fs::canonicalize("/tmp")
+            .unwrap()
+            .to_string_lossy()
+            .into_owned();
+        assert_eq!(result, expected);
     }
 
     #[test]
